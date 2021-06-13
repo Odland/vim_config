@@ -1,0 +1,287 @@
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Bail out if something that ran earlier, e.g. a system wide vimrc, does not
+" want Vim to use these default values.
+if exists('skip_defaults_vim')
+  finish
+endif
+
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+" Avoid side effects when it was already reset.
+if &compatible
+  set nocompatible
+endif
+
+
+" VIM-Plug
+" Install vim-plug if not found
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+	\| PlugInstall --sync | source $MYVIMRC
+\| endif
+
+
+call  plug#begin('~/.vim/plugged')
+	Plug 'junegunn/vim-plug'
+	Plug 'jacoborus/tender.vim'
+	Plug 'rakr/vim-one'
+	Plug 'drewtempelmeyer/palenight.vim'
+	Plug 'KeitaNakamura/neodark.vim'
+	Plug 'iCyMind/NeoSolarized'
+	Plug 'crusoexia/vim-monokai'
+	Plug 'morhetz/gruvbox'
+	"配色方案
+	Plug 'jnurmine/Zenburn'
+	Plug 'altercation/vim-colors-solarized'
+	"shell 交互
+	Plug 'sillybun/vim-repl'
+	"文件目录
+	Plug 'https://github.com/scrooloose/nerdtree'
+	"底部状态栏	
+	Plug 'vim-airline/vim-airline'
+	"状态栏主题
+	Plug 'vim-airline/vim-airline-themes'
+	"检测代码格式python要结合flake8
+	Plug 'w0rp/ale'
+	"带颜色的括号
+	Plug 'kien/rainbow_parentheses.vim'
+	"vim开始画面
+	Plug 'mhinz/vim-startify'
+	"自动缩进
+	Plug 'vim-scripts/indentpython.vim'
+	"Zen emmet
+	Plug 'mattn/emmet-vim'
+    "自动匹配符号
+    Plug 'jiangmiao/auto-pairs'
+    "分割线
+    Plug 'Yggdroot/indentLine'
+	"更好的vim配置
+	Plug 'wklken/k-vim'
+	" 字体
+	Plug 'powerline/powerline-fonts'
+call plug#end()
+
+
+                         "General Options
+" 映射老板键为空格
+let mapleader = "\<Space>"
+" 检测文件类型
+filetype on
+" 针对不同的文件类型采用不同的缩进格式
+filetype indent on
+" 允许插件
+filetype plugin on
+" 启动自动补全
+filetype plugin indent on
+" keep 101 lines of command line history
+set history=100
+" 开启语法高亮
+syntax on
+" Swap
+set noswapfile
+" 设置新文件的编码为 UTF-8
+scriptencoding utf-8
+set encoding=utf-8
+" 自动判断编码时，依次尝试以下编码： 
+set fileencodings=ucs-bom,utf-8,gbk,gb18030,utf-16,big5,cp936,gb2312,iso-8859-1
+" display incomplete commands
+set showcmd
+" Ignore certain types of files on completion
+set wildignore+=*.o,*.obj,*.pyc,.git,*.swp,*.bak,*.class,.svn,*~
+		
+			"Display Settings
+" 搜索高亮
+set hlsearch
+" 高亮当前行、列
+set cursorline
+" 是否自动换行
+set wrap
+" 显示行号
+set number
+" Background color
+ set background=dark
+
+                          "Format Settings
+
+" TAB键缩进宽度
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+" smarttab允许缩进不止一个Tab
+set smarttab
+" Smart indent
+set smartindent
+" Go with smartindent if there is no plugin indent file.
+set autoindent
+" Enable folding with the spacebar 普通模式下把空格映射为折叠开关
+nnoremap <space> za
+"开启25bit的颜色
+set termguicolors
+" Use Ctrl-A to select all
+nnoremap <C-a> ggVG
+" 窗口大小快捷键映射
+nnoremap <C-l> :vertical resize -5<cr>
+nnoremap <C-o> :vertical resize +5<cr>
+" 保存
+imap<C-w> <Esc>:wq<CR>
+
+						"Pluging Settings
+" rainbow_parentheses 彩虹符号
+let g:rbpt_loadcmd_toggle = 1
+let g:rbpt_colorpairs = [
+            \ ['brown',       'RoyalBlue3'],
+            \ ['Darkblue',    'SeaGreen3'],
+            \ ['darkgreen',   'firebrick3'],
+            \ ['darkcyan',    'RoyalBlue3'],
+            \ ['darkred',     'SeaGreen3'],
+            \ ['darkmagenta', 'DarkOrchid3'],
+            \ ['brown',       'firebrick3'],
+            \ ['gray',        'RoyalBlue3'],
+            \ ['darkmagenta', 'DarkOrchid3'],
+            \ ['Darkblue',    'firebrick3'],
+            \ ['darkgreen',   'RoyalBlue3'],
+            \ ['darkcyan',    'SeaGreen3'],
+            \ ['darkred',     'DarkOrchid3'],
+            \ ['red',         'firebrick3'],
+            \ ]
+let g:rbpt_max = 16
+augroup rainbow_parentheses_
+    autocmd!
+	autocmd VimEnter * RainbowParenthesesToggle " Toggle it on/off
+    autocmd Syntax * RainbowParenthesesLoadRound " ()
+    autocmd Syntax * RainbowParenthesesLoadSquare " []
+    autocmd Syntax * RainbowParenthesesLoadBraces "{}
+    autocmd Syntax * RainbowParenthesesLoadChevrons " <>
+augroup END
+	
+"REPL
+let g:repl_program = {
+	\	"python": "ipython",
+	\	"default": "bash",
+	\	}
+
+let g:repl_exit_commands = {
+			\	"python": "quit()",
+			\	"bash": "exit",
+			\	"default": "exit",
+			\	}
+" 自动启动
+au VimEnter * REPLToggle
+"打开REPL时是回到原文件（1）还是停留在REPL窗口中（0）
+let g:repl_stayatrepl_when_open = 0
+"0表示出现在下方，1表示出现在上方，2在左边，3在右边
+let g:repl_position = 3
+"传送代码快捷键，默认为<leader>w
+let g:sendtorepl_invoke_key = "<leader>w"
+"窗口高度
+"let g:repl_height = None
+"窗口宽度
+"let g:repl_width = None
+
+"vim-colors-solarized
+if has('gui_running')
+  set background=dark
+  colorscheme zenburn
+else
+  colorscheme solarized
+endif
+
+"按f5切换色调
+call togglebg#map("<F5>")
+set background=dark
+colorscheme monokai
+" colorscheme zenburn
+" 背景色不透明
+let g:solarized_termtrans=1
+" 文件监视，文件发生改动时提示
+set autoread
+
+
+"Airline
+" 始终显示状态栏
+set laststatus=1
+" Use powerline font
+let g:airline_powerline_fonts = 1
+let g:airline_theme='simple'
+" Tabline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+"启用修改检测
+let g:airline_detect_modified=1
+"enable paste detection 启用粘贴检测 
+let g:airline_detect_paste=1
+"enable crypt detection  启用密码检测
+let g:airline_detect_crypt=1
+"enable spell detection 启用拼写检测
+let g:airline_detect_spell=1
+"determine whether inactive windows should have the left section collapsed tonly the filename of that buffer.  >
+"确定非活动窗口是否应将左侧部分折叠到只有该缓冲区的文件名
+let g:airline_inactive_collapse=1
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.colnr = ' :'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = ' :'
+let g:airline_symbols.maxlinenr = '☰ '
+let g:airline_symbols.dirty='⚡'
+" unicode symbols
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.maxlinenr = '㏑'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.notexists = 'Ɇ'
+let g:airline_symbols.whitespace = 'Ξ'
+
+" Zen emmet
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+let g:user_emmet_mode='a'
+let g:user_emmet_leader_key='<C-Z>'
+
+" Allow backspacing over everything in insert mode.
+set backspace=indent,eol,start
+set showcmd		" display incomplete commands
+set wildmenu		" display completion matches in a status line
+
+if &t_Co > 2 || has("gui_running")
+  " Switch on highlighting the last used search pattern.
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+	" Put these in an autocmd group, so that we can delete them easily.
+	augroup vimrcEx
+	au!
+	" For all text files set 'textwidth' to 79 characters.
+	autocmd FileType text setlocal textwidth=79
+	augroup END
+else
+	set autoindent		" always set autoindenting on
+endif
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+if has("autocmd")
+	au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+" 启用鼠标
+" set mouse=a
