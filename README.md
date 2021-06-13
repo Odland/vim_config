@@ -8,3 +8,4 @@
 - 可以根据自己的需要对插件进程设置
 - 直连会很慢，有条件搭代理的，可以为github设置代理地址： `git config --global https.https://github.com.proxy socks5://127.0.0.1:1080`
 - repl插件不错，还是国人写的，在打开py文件时，会自动加载一个对应的shell
+- 装完插件，效果是这样的:![vim截图](./vim.png)
